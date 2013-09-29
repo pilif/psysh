@@ -67,10 +67,7 @@ class Loop
                     $_ = eval($__psysh__->flushCode());
                     restore_error_handler();
 
-                    $__psysh_out__ = ob_get_contents();
-                    ob_end_clean();
-
-                    $__psysh__->writeStdout($__psysh_out__);
+                    $__psysh__->writeStdout(ob_get_clean());
                     $__psysh__->writeReturnValue($_);
                 } catch (BreakException $_e) {
                     restore_error_handler();
@@ -88,8 +85,6 @@ class Loop
                     $__psysh__->writeException($_e);
                 }
 
-                // a bit of housekeeping
-                unset($__psysh_out__);
                 $__psysh__->afterLoop();
             } while (true);
         };
