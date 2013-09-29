@@ -94,23 +94,33 @@ class Loop
             } while (true);
         };
 
-        // bind the closure to $this from the shell scope variables...
-        if (version_compare(PHP_VERSION, '5.4', '>=')) {
-            $that = null;
-            try {
-                $that = $shell->getScopeVariable('this');
-            } catch (\InvalidArgumentException $e) {
-                // well, it was worth a shot
-            }
+        $this->bindLoop($loop, $shell)->__invoke($shell);
+    }
 
-            if (is_object($that)) {
-                $loop = $loop->bindTo($that, get_class($that));
-            } else {
-                $loop = $loop->bindTo(null);
-            }
+    /**
+     * If closure-binding support is available, bind shell's $this to
+     * closure loop.
+     *
+     * @param Loop $loop
+     * @param Shell $shell
+     * @return Loop Returns a re-bound version of $loop, if available.
+     */
+    private function bindLoop($loop, $shell) {
+        if (!version_compare(PHP_VERSION, '5.4', '>=')) {
+            return $loop;
         }
 
-        $loop($shell);
+        try {
+            $that = $shell->getScopeVariable('this');
+
+            if (is_object($that)) {
+                return $loop->bindTo($that, get_class($that));
+            }
+        } catch (\InvalidArgumentException $e) {
+            // well, it was worth a shot
+        }
+
+        return $loop->bindTo(null);
     }
 
     /**
