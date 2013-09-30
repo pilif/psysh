@@ -89,14 +89,14 @@ class Loop
             } while (true);
         };
 
-        $this->bindLoop($loop, $shell)->__invoke($shell);
+        call_user_func($this->bindLoop($loop, $shell), $shell);
     }
 
     /**
      * If closure-binding support is available, bind shell's $this to
      * closure loop.
      *
-     * @param Loop $loop
+     * @param Closure $loop
      * @param Shell $shell
      * @return Loop Returns a re-bound version of $loop, if available.
      */
