@@ -79,6 +79,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $config->loadConfig(array(
             'useReadline' => false,
             'usePcntl'    => false,
+            'errorLogging' => E_NOTICE,
             'codeCleaner' => $cleaner,
             'pager'       => $pager,
             'loop'        => $loop,
@@ -89,6 +90,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($cleaner, $config->getCodeCleaner());
         $this->assertSame($pager, $config->getPager());
         $this->assertSame($loop, $config->getLoop());
+        $this->assertEquals(E_NOTICE, $config->getErrorLogging());
     }
 
     public function testLoadConfigFile()

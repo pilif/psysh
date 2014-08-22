@@ -152,6 +152,42 @@ class ShellTest extends \PHPUnit_Framework_TestCase
         }
     }
 
+    public function testErrorLogging(){
+        $errorLevel = E_ALL & ~E_USER_NOTICE | E_USER_DEPRECATED;
+        $oldLevel = error_reporting();
+
+        $config = new Configuration();
+        $config->setErrorLogging($errorLevel);
+
+        error_reporting($errorLevel & ~E_USER_DEPRECATED);
+
+        $shell  = new Shell($config);
+        $output = $this->getOutput();
+        $stream = $output->getStream();
+        $shell->setOutput($output);
+
+        try {
+            $shell->handleError(E_USER_NOTICE, 'foo', null, 13);
+        } catch (ErrorException $e) {
+            $this->fail('Unexpected error exception: '.$e->getMessage());
+        }
+        rewind($stream);
+        $streamContents = stream_get_contents($stream);
+        $this->assertNotContains('PHP error:', $streamContents);
+
+        try {
+            $shell->handleError(E_USER_DEPRECATED, 'foo', null, 13);
+        } catch (ErrorException $e) {
+            $this->fail('Unexpected error exception: '.$e->getMessage());
+        }
+        error_reporting($oldLevel);
+        rewind($stream);
+        $streamContents = stream_get_contents($stream);
+        $this->assertContains('PHP error:', $streamContents);
+        $this->assertContains('foo', $streamContents);
+
+    }
+
     public function testVersion()
     {
         $shell = new Shell;

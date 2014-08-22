@@ -656,7 +656,9 @@ class Shell extends Application
             ErrorException::throwException($errno, $errstr, $errfile, $errline);
         } else {
             // log it and continue...
-            $this->writeException(new ErrorException($errstr, 0, $errno, $errfile, $errline));
+            if ($errno & $this->config->getErrorLogging()) {
+                $this->writeException(new ErrorException($errstr, 0, $errno, $errfile, $errline));
+            }
         }
     }
 

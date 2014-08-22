@@ -30,9 +30,10 @@ class Configuration
     private static $AVAILABLE_OPTIONS = array(
         'defaultIncludes', 'useReadline', 'usePcntl', 'codeCleaner', 'pager',
         'loop', 'tempDir', 'manualDbFile', 'presenters',
-        'historySize', 'eraseDuplicates'
+        'historySize', 'eraseDuplicates', 'errorLogging'
     );
     private $defaultIncludes;
+    private $errorLogging;
     private $baseDir;
     private $tempDir;
     private $configFile;
@@ -180,6 +181,26 @@ class Configuration
     public function getDefaultIncludes()
     {
         return $this->defaultIncludes ?: array();
+    }
+
+    /**
+     * Set the error level of errors to log to the console
+     *
+     * @param $level
+     */
+    public function setErrorLogging($level)
+    {
+        $this->errorLogging = $level;
+    }
+
+    /**
+     * Gets the level of errors to log to the console
+     *
+     * @return int
+     */
+    public function getErrorLogging()
+    {
+        return $this->errorLogging ?: E_ALL;
     }
 
     /**
